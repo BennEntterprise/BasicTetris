@@ -8,6 +8,8 @@ const morgan = require('morgan');
 app.use(express.static('public'));
 app.use(morgan('dev'));
 
+
+
 app.get('/', function(req, res){
   res.sendFile('index.html')
 });
