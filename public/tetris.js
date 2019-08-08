@@ -2,7 +2,18 @@ const canvas= document.getElementById('tetris');
 const context = canvas.getContext('2d');
 context.scale(20,20);
 
+
 //set colors, the arena and the player.
+
+
+const arena = createMatrix(12,20);
+const player = {
+	pos: {x: 0, y: 0},
+	matrix: null,
+	score:0,
+};
+
+
 const colors=[
 	null,
 	'red',
@@ -13,16 +24,13 @@ const colors=[
 	'orange',
 	'pink',
 ]
-const arena=createMatrix(12,20);
-const player ={
-	pos: {x: 0, y: 0},
-	matrix: null,
-	score:0,
-};
 
 let dropCounter= 0;
 let lastTime=0;
 let dropInterval= 1000; //1 Second
+
+
+
 
 function arenaSweep(){
 	let rowCount=1;
@@ -39,7 +47,11 @@ function arenaSweep(){
 		rowCount*=2;
 	}
 }
+
+//
 //Collide decides if the player has hit another piece.
+//
+
 function collide(arena, player){
 	const [m,o] = [player.matrix, player.pos];
 	for (let y=0 ; y< m.length; ++y ){
@@ -140,17 +152,7 @@ function merge(arena,player){
 		});
 	});
 }
-function playerDrop(){
-	player.pos.y++;
-	if(collide(arena,player)){
-		player.pos.y--;
-		merge(arena,player);
-		playerReset();
-		arenaSweep();
-		updateScore();
-	}
-	dropCounter = 0;
-}
+
 function playerMove(dir){
 	player.pos.x += dir;
 	if(collide(arena,player)){
@@ -158,17 +160,25 @@ function playerMove(dir){
 	}
 }
 function playerReset(){
+	//Take the available pieces and randomly select one.
 	const pieces='ILJOTSZ';
 	player.matrix= createPiece(pieces[pieces.length * Math.random() | 0]);
+
+	//Set the position of the player centered at top of the canvas.
 	player.pos.y=0;
-	player.pos.x = (arena[0].length / 2 | 0)-
-					(player.matrix[0].length /2 | 0);
+	player.pos.x =
+		(arena[0].length / 2 | 0) -
+		(player.matrix[0].length /2 | 0);
+
+	//Take the arena and player to check for collission. Update based on collissoin.
 	if(collide(arena,player)){
 		arena.forEach(row => row.fill(0));
 		player.score= 0;
 		updateScore();
 	};
 }
+
+
 function playerRotate(dir){
 	const pos= player.pos.x;
 	let offset = 1;
@@ -204,6 +214,18 @@ function rotate(matrix, dir){
 	};
 
 }
+function playerDrop(){
+	player.pos.y++;
+	if(collide(arena,player)){
+		player.pos.y--;
+		merge(arena,player);
+		playerReset();
+		arenaSweep();
+		updateScore();
+	}
+	dropCounter = 0;
+}
+
 function update(time=0){
 	//Update the drop interval (Speed that the piece falls) based on player score.
 
