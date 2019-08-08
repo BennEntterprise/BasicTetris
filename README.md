@@ -1,5 +1,5 @@
 # BasicTetris
-This game was created following a tutorial a few years ago, but I would like to add some additional 
+This Tetris game was created a few years ago, but I would like to add some additional 
 features that make this a bit more engaging. 
 
 
@@ -14,7 +14,6 @@ npm install
 
 Start the Server
 npm dev
-
 
 Playing the Game
 Use arrows to move the puzzle piece around. Use "Q" and "W" to rotate the piece. 
