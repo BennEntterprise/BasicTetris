@@ -13,7 +13,7 @@ Install Dependencies
 npm install 
 
 Start the Server
-npm dev
+npm start
 
 Playing the Game
 Use arrows to move the puzzle piece around. Use "Q" and "W" to rotate the piece. 
