@@ -1,18 +1,11 @@
-const canvas= document.getElementById('tetris');
+//Grab the game canvas and declare
+const canvas = document.getElementById('tetris');
 const context = canvas.getContext('2d');
 context.scale(20,20);
 
 
-//set colors, the arena and the player.
-
-
-const arena = createMatrix(12,20);
-const player = {
-	pos: {x: 0, y: 0},
-	matrix: null,
-	score:0,
-};
-const colors=[
+//set colors to be used and the arena size.
+const colors = [
 	null,
 	'red',
 	'blue',
@@ -22,10 +15,30 @@ const colors=[
 	'orange',
 	'pink',
 ]
+const arena = createMatrix(12,20);
+function createMatrix(w,h) {
+	//A function that creates the arena as a matrix, fill with "0" by default.
+	// A "0" in the arena space means there is no part of a tile covering it.
+	const matrix = [];
+	while(h--){
+		matrix.push(new Array(w).fill(0));
+	};
+	return matrix;
+}
 
-let dropCounter= 0;
-let lastTime=0;
-let dropInterval= 1000; //1 Second
+
+
+//Create a player object which stores score, the positon, and the piece matrix
+const player = {
+	pos: {x: 0, y: 0},
+	matrix: null,
+	score:0,
+};
+
+
+let dropCounter = 0;
+let lastTime = 0;
+let dropInterval = 1000; //1 Second
 
 let level = 0;
 
@@ -46,11 +59,10 @@ function arenaSweep(){
 	}
 }
 
-//
-//Collide decides if the player has hit another piece.
-//
-
 function collide(arena, player){
+	//
+	//Collide decides if the player has hit another piece.
+	//
 	const [m,o] = [player.matrix, player.pos];
 	for (let y=0 ; y< m.length; ++y ){
 		for(let x=0; x < m[y].length; ++x){
@@ -63,14 +75,8 @@ function collide(arena, player){
 	};
 	return false;
 }
-function createMatrix(w,h) {
-	const matrix = [];
-	while(h--){
-		matrix.push(new Array(w).fill(0));
-	};
-	return matrix;
-}
 function createPiece(type){
+	//A function to create the next piece
 	//Switch Statetement to determine which piece the player will be next.
 	switch (type){
 		case 'T':
@@ -121,25 +127,33 @@ function createPiece(type){
 	};
 }
 function draw(){
+	//function responisble for drawing:
+	// 1 the black canvas
+	// 2 the arena as it stands that instance
+	// 3 the plyaer as it stands that instance
 	context.fillStyle= '#000';
 	context.fillRect(0,0,canvas.width, canvas.height);
-
 	drawMatrix(arena, {x: 0, y: 0});
 	drawMatrix(player.matrix,player.pos);
 }
 function drawMatrix (matrix,offset){
+	//Draws a givin matrix (arena, or player) starting at the offset {x,y}
 	matrix.forEach((row, y) => {
 		row.forEach((value,x) =>{
+			//If its not 0 ==(black) style appripriately
 			if(value!==0){
 				context.fillStyle=colors[value];
-				context.fillRect(x + offset.x,
-								 y + offset.y,
-								 1,1);
+				context.fillRect(
+					x + offset.x,
+				 	y + offset.y,
+				 	1,1);
 			}
 		});
 	});
 }
 function merge(arena,player){
+	//Moves the player matrix into the arena matrix
+	//This function will be called when there is a collision detected on a drop
 	player.matrix.forEach((row,y) =>{
 		row.forEach((value,x) =>{
 			if(value!==0){
@@ -149,7 +163,11 @@ function merge(arena,player){
 	});
 }
 function playerMove(dir){
+	//Move left or right depending on keypress
 	player.pos.x += dir;
+
+	//Checks to make sure a player isnt moving into an existing tower. If it is,
+	//the will be moved back. (removing this line allows for quantum tunneling)
 	if(collide(arena,player)){
 		player.pos.x -= dir;
 	}
@@ -160,12 +178,14 @@ function playerReset(){
 	player.matrix= createPiece(pieces[pieces.length * Math.random() | 0]);
 
 	//Set the position of the player centered at top of the canvas.
+	//Y is as low as possible. X is the averave of the left and right side of matrix, less half the player space.
 	player.pos.y=0;
 	player.pos.x =
 		(arena[0].length / 2 | 0) -
 		(player.matrix[0].length /2 | 0);
 
-	//Take the arena and player to check for collission. Update based on collissoin.
+	//Take the arena and player to check for collission. If there is (at this zero point) then the game is over.
+	//// TODO: {Create an end screen that displays final score}
 	if(collide(arena,player)){
 		arena.forEach(row => row.fill(0));
 		player.score= 0;
@@ -220,19 +240,20 @@ function playerDrop(){
 }
 function update(time=0){
 	//Update the drop interval (Speed that the piece falls) based on player score.
-
-	dropInterval=1000- document.getElementById('score').innerText;
+	dropInterval = 1000- document.getElementById('score').innerText;
 	const deltaTime = time- lastTime;
 	lastTime = time;
 
-	dropCounter+= deltaTime;
+	dropCounter += deltaTime;
 	if(dropCounter> dropInterval){
 		playerDrop();
 	}
 	draw();
 	requestAnimationFrame(update);
 }
+
 function updateScore(){
+	//A function to update the score and level of the game.
 	document.getElementById('score').innerText = player.score;
 	level = Math.floor(player.score /100);
 	document.getElementById('level').innerText= level;
