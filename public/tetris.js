@@ -12,8 +12,6 @@ const player = {
 	matrix: null,
 	score:0,
 };
-
-
 const colors=[
 	null,
 	'red',
@@ -29,7 +27,7 @@ let dropCounter= 0;
 let lastTime=0;
 let dropInterval= 1000; //1 Second
 
-
+let level = 0;
 
 
 function arenaSweep(){
@@ -74,7 +72,6 @@ function createMatrix(w,h) {
 }
 function createPiece(type){
 	//Switch Statetement to determine which piece the player will be next.
-
 	switch (type){
 		case 'T':
 			return [
@@ -122,7 +119,6 @@ function createPiece(type){
 				];
 
 	};
-
 }
 function draw(){
 	context.fillStyle= '#000';
@@ -152,7 +148,6 @@ function merge(arena,player){
 		});
 	});
 }
-
 function playerMove(dir){
 	player.pos.x += dir;
 	if(collide(arena,player)){
@@ -177,8 +172,6 @@ function playerReset(){
 		updateScore();
 	};
 }
-
-
 function playerRotate(dir){
 	const pos= player.pos.x;
 	let offset = 1;
@@ -225,13 +218,12 @@ function playerDrop(){
 	}
 	dropCounter = 0;
 }
-
 function update(time=0){
 	//Update the drop interval (Speed that the piece falls) based on player score.
 
 	dropInterval=1000- document.getElementById('score').innerText;
-	const deltaTime= time- lastTime;
-	lastTime= time;
+	const deltaTime = time- lastTime;
+	lastTime = time;
 
 	dropCounter+= deltaTime;
 	if(dropCounter> dropInterval){
@@ -242,6 +234,8 @@ function update(time=0){
 }
 function updateScore(){
 	document.getElementById('score').innerText = player.score;
+	level = Math.floor(player.score /100);
+	document.getElementById('level').innerText= level;
 }
 
 document.addEventListener('keydown',event => {
@@ -269,6 +263,8 @@ document.addEventListener('keydown',event => {
 			break;
 	};
 });
+
+
 playerReset();
 updateScore();
 update();
