@@ -193,21 +193,23 @@ function playerReset(){
 	};
 }
 function playerRotate(dir){
-	const pos= player.pos.x;
+	//Rotates the player based on a keypress.
+	const pos = player.pos.x;
 	let offset = 1;
-	rotate(player.matrix,dir);
-	while (collide(arena,player)) {
+	rotate( player.matrix , dir );
+
+	while ( collide(arena,player) ) {
 		player.pos.x = player.pos.x + offset;
-		offset= -1*(offset + (offset > 0 ? 1 : -1));
+		offset = -1*(offset + (offset > 0 ? 1 : -1));
 		if(offset > player.matrix[0].length){
 			rotate(player.matrix, -1*dir);
 			player.pos.x = pos;
 			return;
 		}
 	}
-
 }
 function rotate(matrix, dir){
+	//Rotates a matrix in a given direction.
 	for(let y = 0; y < matrix.length; ++y) {
 		for(let x= 0; x < y; ++x) {
 				[
@@ -228,6 +230,7 @@ function rotate(matrix, dir){
 
 }
 function playerDrop(){
+	//Move the player down and tests for a collision.
 	player.pos.y++;
 	if(collide(arena,player)){
 		player.pos.y--;
@@ -240,6 +243,7 @@ function playerDrop(){
 }
 function update(time=0){
 	//Update the drop interval (Speed that the piece falls) based on player score.
+	//The smaller the drop interval, the faster the fall.
 	dropInterval = 1000- document.getElementById('score').innerText;
 	const deltaTime = time- lastTime;
 	lastTime = time;
