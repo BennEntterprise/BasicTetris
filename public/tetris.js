@@ -35,13 +35,18 @@ const player = {
 	score:0,
 };
 
-
-let dropCounter = 0;
+//Game Variables
+let dropCounter = 0;  //Times how long it has been since the last drop.
 let lastTime = 0;
-let dropInterval = 1000; //1 Second
-
+let dropInterval = 1000; //Denotes the time between drops
 let level = 0;
 
+//// TODO:  Implement a 'next piece' canvas to show the upcoming piece.
+// 1) Create a spece on the document
+// 2) Scale the context to fit a piece (5x5?)
+// 3) Run the createPiece, store it in the 'next piece' var/canvas
+// 4) Implement a second create piece in player reset (First one actually calls 'createPiece and stores in next piece, the other just grabs the aformentioned next piece.')
+// 5) Enjoy!
 
 function arenaSweep(){
 	let rowCount=1;
@@ -58,7 +63,6 @@ function arenaSweep(){
 		rowCount*=2;
 	}
 }
-
 function collide(arena, player){
 	//
 	//Collide decides if the player has hit another piece.
