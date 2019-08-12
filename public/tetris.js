@@ -48,6 +48,9 @@ let level = 0;
 // 4) Implement a second create piece in player reset (First one actually calls 'createPiece and stores in next piece, the other just grabs the aformentioned next piece.')
 // 5) Enjoy!
 
+
+
+
 function arenaSweep(){
 	let rowCount=1;
 	outer: for(let y= arena.length-1; y > 0;--y){
@@ -259,7 +262,6 @@ function update(time=0){
 	draw();
 	requestAnimationFrame(update);
 }
-
 function updateScore(){
 	//A function to update the score and level of the game.
 	document.getElementById('score').innerText = player.score;
