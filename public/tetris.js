@@ -2,6 +2,13 @@
 const canvas = document.getElementById('tetris');
 const context = canvas.getContext('2d');
 context.scale(20,20);
+const arena = createMatrix(12,20);
+
+
+const npC = document.getElementById('nPiece');
+const npContext = npC.getContext('2d');
+npContext.scale(80,60);
+const pieceStageArea = createMatrix(4,4);
 
 
 //set colors to be used and the arena size.
@@ -15,7 +22,6 @@ const colors = [
 	'orange',
 	'pink',
 ]
-const arena = createMatrix(12,20);
 function createMatrix(w,h) {
 	//A function that creates the arena as a matrix, fill with "0" by default.
 	// A "0" in the arena space means there is no part of a tile covering it.
@@ -26,14 +32,17 @@ function createMatrix(w,h) {
 	return matrix;
 }
 
-
-
-//Create a player object which stores score, the positon, and the piece matrix
+//An object representing the active player (piece that moves)
 const player = {
 	pos: {x: 0, y: 0},
 	matrix: null,
 	score:0,
 };
+//An object representing the NEXT active player (upcoming piece)
+const nextPlayer = {
+	pos: {x: 0, y: 0},
+	matrix: null,
+}
 
 //Game Variables
 let dropCounter = 0;  //Times how long it has been since the last drop.
@@ -41,12 +50,13 @@ let lastTime = 0;
 let dropInterval = 1000; //Denotes the time between drops
 let level = 0;
 
-//// TODO:  Implement a 'next piece' canvas to show the upcoming piece.
-// 1) Create a spece on the document
-// 2) Scale the context to fit a piece (5x5?)
-// 3) Run the createPiece, store it in the 'next piece' var/canvas
-// 4) Implement a second create piece in player reset (First one actually calls 'createPiece and stores in next piece, the other just grabs the aformentioned next piece.')
-// 5) Enjoy!
+// TODO:  Implement a 'next piece' canvas to show the upcoming piece.
+// 1) DONE: Create a spece on the document
+// 2) DONE: Scale the context to fit a piece (5x5?)
+// 3) DONE: Run the createPiece, store it in the 'nPiece' var/canvas
+// 4) DONE: Implement a second create piece in player reset (First one actually calls 'createPiece and stores in next piece, the other just grabs the aformentioned next piece.')
+// 5) DONE: Enjoy!
+// 6) Refine the Aspect Ratio in the next View.
 
 
 
@@ -82,10 +92,12 @@ function collide(arena, player){
 	};
 	return false;
 }
-function createPiece(type){
+function createPiece(){
 	//A function to create the next piece
 	//Switch Statetement to determine which piece the player will be next.
-	switch (type){
+	const pieces='ILJOTSZ';
+	const randPiece = pieces[pieces.length * Math.random() | 0]
+	switch (randPiece){
 		case 'T':
 			return [
 				[0,0,0],
@@ -138,12 +150,20 @@ function draw(){
 	// 1 the black canvas
 	// 2 the arena as it stands that instance
 	// 3 the plyaer as it stands that instance
-	context.fillStyle= '#000';
+
+	//Take care of the
+	context.fillStyle = '#000';
+	context.strokeStyle = '#fff';
 	context.fillRect(0,0,canvas.width, canvas.height);
-	drawMatrix(arena, {x: 0, y: 0});
-	drawMatrix(player.matrix,player.pos);
+	drawOnGameMatrix(arena, {x: 0, y: 0});
+	drawOnGameMatrix(player.matrix,player.pos);
+
+	npContext.fillStyle ='#111';
+	npContext.strokeStyle = '#fff';
+	npContext.fillRect(0,0,canvas.width, canvas.height);
+	drawOnStagingMatrix(nextPlayer.matrix,{x: 0, y:0}); //TODO Create this Function
 }
-function drawMatrix (matrix,offset){
+function drawOnGameMatrix (matrix,offset){
 	//Draws a givin matrix (arena, or player) starting at the offset {x,y}
 	matrix.forEach((row, y) => {
 		row.forEach((value,x) =>{
@@ -151,6 +171,21 @@ function drawMatrix (matrix,offset){
 			if(value!==0){
 				context.fillStyle=colors[value];
 				context.fillRect(
+					x + offset.x,
+				 	y + offset.y,
+				 	1,1);
+			}
+		});
+	});
+}
+function drawOnStagingMatrix (matrix,offset){
+	//Draws a givin matrix (arena, or player) starting at the offset {x,y}
+	matrix.forEach((row, y) => {
+		row.forEach((value,x) =>{
+			//If its not 0 ==(black) style appripriately
+			if(value!==0){
+				npContext.fillStyle=colors[value];
+				npContext.fillRect(
 					x + offset.x,
 				 	y + offset.y,
 				 	1,1);
@@ -180,9 +215,10 @@ function playerMove(dir){
 	}
 }
 function playerReset(){
-	//Take the available pieces and randomly select one.
-	const pieces='ILJOTSZ';
-	player.matrix= createPiece(pieces[pieces.length * Math.random() | 0]);
+	// console.log('PlayerReset');
+	//Grab previously set 'nextPlayer' then create a new nextPlayer
+	player.matrix = nextPlayer.matrix;
+	nextPlayer.matrix = createPiece();
 
 	//Set the position of the player centered at top of the canvas.
 	//Y is as low as possible. X is the averave of the left and right side of matrix, less half the player space.
@@ -198,6 +234,8 @@ function playerReset(){
 		player.score= 0;
 		updateScore();
 	};
+
+
 }
 function playerRotate(dir){
 	//Rotates the player based on a keypress.
@@ -249,6 +287,7 @@ function playerDrop(){
 	dropCounter = 0;
 }
 function update(time=0){
+	// console.log('Update');
 	//Update the drop interval (Speed that the piece falls) based on player score.
 	//The smaller the drop interval, the faster the fall.
 	dropInterval = 1000- document.getElementById('score').innerText;
@@ -263,10 +302,15 @@ function update(time=0){
 	requestAnimationFrame(update);
 }
 function updateScore(){
+	// console.log('UpdateScore');
 	//A function to update the score and level of the game.
 	document.getElementById('score').innerText = player.score;
 	level = Math.floor(player.score /100);
 	document.getElementById('level').innerText= level;
+}
+function initialize(){
+	// console.log('Initialize');
+	nextPlayer.matrix = createPiece();
 }
 
 document.addEventListener('keydown',event => {
@@ -295,7 +339,7 @@ document.addEventListener('keydown',event => {
 	};
 });
 
-
+initialize();
 playerReset();
 updateScore();
 update();
