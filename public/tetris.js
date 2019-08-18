@@ -42,7 +42,7 @@ const player = {
 const nextPlayer = {
 	pos: {x: 0, y: 0},
 	matrix: null,
-}
+};
 
 //Game Variables
 let dropCounter = 0;  //Times how long it has been since the last drop.
