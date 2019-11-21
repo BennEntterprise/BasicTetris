@@ -30,3 +30,6 @@ you create will earn you a point. See how high of a score you can get without le
 get to the ceiling!
 
 Happy Playing! 
+
+### Technologies Used
+- HTML/CSS/JS (Vanilla)
