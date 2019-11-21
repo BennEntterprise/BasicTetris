@@ -5,10 +5,10 @@ context.scale(20,20);
 const arena = createMatrix(12,20);
 
 
-const npC = document.getElementById('nPiece');
-const npContext = npC.getContext('2d');
-npContext.scale(80,60);
-const pieceStageArea = createMatrix(4,4);
+// const npC = document.getElementById('nPiece');
+// const npContext = npC.getContext('2d');
+// npContext.scale(80,60);
+// const pieceStageArea = createMatrix(4,4);
 
 
 //set colors to be used and the arena size.
@@ -158,10 +158,10 @@ function draw(){
 	drawOnGameMatrix(arena, {x: 0, y: 0});
 	drawOnGameMatrix(player.matrix,player.pos);
 
-	npContext.fillStyle ='#111';
-	npContext.strokeStyle = '#fff';
-	npContext.fillRect(0,0,canvas.width, canvas.height);
-	drawOnStagingMatrix(nextPlayer.matrix,{x: 0, y:0}); //TODO Create this Function
+	// npContext.fillStyle ='#111';
+	// npContext.strokeStyle = '#fff';
+	// npContext.fillRect(0,0,canvas.width, canvas.height);
+	// drawOnStagingMatrix(nextPlayer.matrix,{x: 0, y:0}); //TODO Create this Function
 }
 function drawOnGameMatrix (matrix,offset){
 	//Draws a givin matrix (arena, or player) starting at the offset {x,y}

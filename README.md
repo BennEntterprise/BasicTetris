@@ -2,18 +2,26 @@
 This Tetris game was created a few years ago, but I would like to add some additional 
 features that make this a bit more engaging. 
 
-
 ## To Use
 Download or clone the git repository. 
+```
+git clone https://github.com/BennEntterprise/BasicTetris.git
+```
 
 ## Get into the directory 
+```
 cd BasicTetris
+```
 
 ## Install Dependencies
-npm install 
+```
+npm install
+```
 
 ## Start the Server
+```
 npm start
+```
 
 ## Playing the Game
 Use arrows to move the puzzle piece around. Use "Q" and "W" to rotate the piece. 
